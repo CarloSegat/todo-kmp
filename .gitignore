@@ -1,0 +1,36 @@
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Kotlin
+.kotlin/
+
+# Local configuration
+local.properties
+
+# IDE
+.idea/
+*.iml
+.vscode/
+
+# Android
+*.apk
+*.aab
+*.dex
+*.ap_
+
+# iOS / Xcode (for later)
+*.xcuserstate
+xcuserdata/
+Pods/
+DerivedData/
+
+# macOS
+.DS_Store
+
+# Logs / crash
+*.log
+hs_err_pid*
+replay_pid*
