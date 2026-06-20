@@ -23,21 +23,25 @@ import com.carlosegat.todo.android.TaskViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskListScreen(viewModel: TaskViewModel) {
-    val todos by viewModel.todos.collectAsState()
+    val todos by viewModel.todos.collectAsState() // see lecture slides for an explanation of this line
 
     Scaffold(
+        // the { } wraps the call in a lambda
+        // the lambda syntax () -> ... ony works for types
         topBar = { TopAppBar(title = { Text("Todos") }) },
         floatingActionButton = {
             FloatingActionButton(onClick = { viewModel.add() }) {
                 Icon(Icons.Default.Add, contentDescription = "Add todo")
             }
         }
-    ) { paddingValues ->
+    ) { paddingValues -> // the Scaffold computed and passes the paddingValues
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
+            // items(...){...} is a block body
+            // key could have been: key = { e -> e.id }
             items(todos, key = { it.id }) { todo ->
                 ListItem(
                     leadingContent = {

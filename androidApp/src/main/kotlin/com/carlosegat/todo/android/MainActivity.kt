@@ -12,6 +12,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        // setContent() { ... } also works
+        // Kotlin has a rule so that empty () on trailing lambda can be omitted
         setContent {
             TodoAppTheme {
                 val viewModel: TaskViewModel = viewModel()
