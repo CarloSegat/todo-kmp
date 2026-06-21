@@ -5,7 +5,6 @@ import com.carlosegat.todo.model.Todo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.util.UUID
 
 class TaskViewModel : ViewModel() {
     private val _todos = MutableStateFlow<List<Todo>>(emptyList())
@@ -14,12 +13,7 @@ class TaskViewModel : ViewModel() {
     fun add() {
         val title = "Task ${_todos.value.size + 1}"
         println("TodoVM: adding $title")
-        val todo = Todo(
-            id = UUID.randomUUID().toString(),
-            title = title,
-            createdAt = System.currentTimeMillis(),
-        )
-        _todos.value = _todos.value + todo
+        _todos.value = _todos.value + Todo.create(title)
     }
 
     fun toggle(id: String) {
