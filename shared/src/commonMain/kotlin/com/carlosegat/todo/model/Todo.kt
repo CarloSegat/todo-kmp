@@ -12,6 +12,9 @@ data class Todo(
     val description: String = "",
     val imagePath: String? = null,
 ) {
+    // "Toggle done" is an entity rule, so it lives on the model. Returns a new (immutable) Todo.
+    fun toggled(): Todo = copy(done = !done)
+
     companion object { // Kotlin's "static": members on the class itself, called as Todo.create(...)
         // Creating a Todo (client-generated id + creation time) is a domain rule, so it
         // lives in the model — in shared/commonMain, every platform builds Todos the same way.

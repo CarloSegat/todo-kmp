@@ -25,6 +25,6 @@ class TaskViewModel : ViewModel() {
     }
 
     fun toggle(id: String) {
-        _todos.value = _todos.value.map { if (it.id == id) it.copy(done = !it.done) else it }
+        _todos.value = _todos.value.map { if (it.id == id) it.toggled() else it }
     }
 }
