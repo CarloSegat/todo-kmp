@@ -9,9 +9,15 @@ import com.carlosegat.todo.android.ui.screens.TaskListScreen
 import com.carlosegat.todo.android.ui.theme.TodoAppTheme
 
 class MainActivity : ComponentActivity() {
+    // savedInstanceState: a Bundle the framework uses to restore transient UI state when the
+    // Activity is destroyed and recreated (e.g. screen rotation).
+    // It is null on a fresh launch, and non-null on recreation (it holds whatever was stashed
+    // in onSaveInstanceState)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+
+        enableEdgeToEdge() // vertical edges
+
         // setContent() { ... } also works
         // Kotlin has a rule so that empty () on trailing lambda can be omitted
         setContent {

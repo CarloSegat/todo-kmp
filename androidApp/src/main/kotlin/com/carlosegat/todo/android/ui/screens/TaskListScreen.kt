@@ -23,7 +23,7 @@ import com.carlosegat.todo.android.TaskViewModel
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TaskListScreen(viewModel: TaskViewModel) {
-    val todos by viewModel.todos.collectAsState() // see lecture slides for an explanation of this line
+    val todos by viewModel.todos.collectAsState()
 
     Scaffold(
         // the { } wraps the call in a lambda
