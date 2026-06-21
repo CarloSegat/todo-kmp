@@ -21,16 +21,10 @@ class TaskViewModel : ViewModel() {
 
     fun add() {
         val title = "Task ${_todos.value.size + 1}"
-        println("TodoVM: adding $title")
         _todos.value = _todos.value + Todo.create(title)
     }
 
     fun toggle(id: String) {
-        val updated = _todos.value.toMutableList()
-        val i = updated.indexOfFirst { it.id == id }
-        if (i != -1) {
-            updated[i] = updated[i].copy(done = !updated[i].done)
-        }
-        _todos.value = updated
+        _todos.value = _todos.value.map { if (it.id == id) it.copy(done = !it.done) else it }
     }
 }
