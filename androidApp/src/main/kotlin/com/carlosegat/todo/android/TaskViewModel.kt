@@ -19,9 +19,8 @@ class TaskViewModel : ViewModel() {
     // and recomposes whenever the value changes.
     val todos: StateFlow<List<Todo>> = _todos.asStateFlow()
 
-    fun add() {
-        val title = "Task ${_todos.value.size + 1}"
-        _todos.value = _todos.value + Todo.create(title)
+    fun add(title: String) {
+        _todos.value += Todo.create(title)
     }
 
     fun toggle(id: String) {
