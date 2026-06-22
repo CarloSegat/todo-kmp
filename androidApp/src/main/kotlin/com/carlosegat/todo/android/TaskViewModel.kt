@@ -26,4 +26,8 @@ class TaskViewModel : ViewModel() {
     fun toggle(id: String) {
         _todos.value = _todos.value.map { if (it.id == id) it.toggled() else it }
     }
+
+    fun delete(id: String) {
+        _todos.value = _todos.value.filterNot { it.id == id }
+    }
 }
