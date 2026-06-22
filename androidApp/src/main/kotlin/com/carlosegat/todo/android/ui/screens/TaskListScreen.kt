@@ -8,12 +8,14 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.BarChart
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.ListItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -37,14 +39,23 @@ import com.carlosegat.todo.android.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskListScreen(viewModel: TaskViewModel) {
+fun TaskListScreen(viewModel: TaskViewModel, onOpenStats: () -> Unit) {
     val todos by viewModel.todos.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
 
     Scaffold(
         // the { } wraps the call in a lambda
         // the lambda syntax () -> ... ony works for types
-        topBar = { TopAppBar(title = { Text("Todos") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Todos") },
+                actions = {
+                    IconButton(onClick = onOpenStats) {
+                        Icon(Icons.Default.BarChart, contentDescription = "Statistics")
+                    }
+                },
+            )
+        },
         floatingActionButton = {
             FloatingActionButton(onClick = { showAddDialog = true }) {
                 Icon(Icons.Default.Add, contentDescription = "Add todo")
