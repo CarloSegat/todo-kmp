@@ -27,4 +27,8 @@ class TaskManager {
     fun delete(id: String) {
         _todos.value = _todos.value.filterNot { it.id == id }
     }
+
+    fun update(todo: Todo) {
+        _todos.value = _todos.value.map { if (it.id == todo.id) todo else it }
+    }
 }

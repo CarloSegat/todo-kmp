@@ -1,6 +1,7 @@
 package com.carlosegat.todo.android.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -39,7 +40,7 @@ import com.carlosegat.todo.android.TaskViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TaskListScreen(viewModel: TaskViewModel, onOpenStats: () -> Unit) {
+fun TaskListScreen(viewModel: TaskViewModel, onOpenStats: () -> Unit, onOpenTask: (String) -> Unit) {
     val todos by viewModel.todos.collectAsState()
     var showAddDialog by remember { mutableStateOf(false) }
 
@@ -103,6 +104,7 @@ fun TaskListScreen(viewModel: TaskViewModel, onOpenStats: () -> Unit) {
                     },
                 ) {
                     ListItem(
+                        modifier = Modifier.clickable { onOpenTask(todo.id) },
                         leadingContent = {
                             Checkbox(
                                 checked = todo.done,

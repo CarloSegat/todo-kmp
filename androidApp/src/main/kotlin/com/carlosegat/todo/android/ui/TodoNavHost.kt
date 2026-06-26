@@ -7,6 +7,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.carlosegat.todo.android.TaskViewModel
 import com.carlosegat.todo.android.ui.screens.StatisticsScreen
+import com.carlosegat.todo.android.ui.screens.TaskDetailScreen
 import com.carlosegat.todo.android.ui.screens.TaskListScreen
 
 @Composable
@@ -20,6 +21,7 @@ fun TodoNavHost() {
             TaskListScreen(
                 viewModel = viewModel,
                 onOpenStats = { navController.navigate("stats") },
+                onOpenTask = { id -> navController.navigate("task/$id") },
             )
         }
         composable("stats") {
@@ -27,6 +29,19 @@ fun TodoNavHost() {
                 viewModel = viewModel,
                 onBack = { navController.popBackStack() },
             )
+        }
+        // backStackEntry = the Navigation back-stack entry for THIS destination instance:
+        // it carries the route's parsed arguments (here, {id}) plus a Lifecycle + ViewModelStore
+        // scoped to this screen.
+        composable("task/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")
+            if (id != null) {
+                TaskDetailScreen(
+                    todoId = id,
+                    viewModel = viewModel,
+                    onBack = { navController.popBackStack() },
+                )
+            }
         }
     }
 }
