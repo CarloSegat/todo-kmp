@@ -5,6 +5,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import com.carlosegat.todo.android.TaskViewModel
 import com.carlosegat.todo.android.ui.screens.StatisticsScreen
 import com.carlosegat.todo.android.ui.screens.TaskDetailScreen
@@ -33,7 +34,14 @@ fun TodoNavHost() {
         // backStackEntry = the Navigation back-stack entry for THIS destination instance:
         // it carries the route's parsed arguments (here, {id}) plus a Lifecycle + ViewModelStore
         // scoped to this screen.
-        composable("task/{id}") { backStackEntry ->
+        composable(
+            route = "task/{id}",
+            // deepLinks = the external URIs that map to THIS destination. When the app is
+            // opened with a matching URI — via the manifest's todoapp://task/... intent-filter,
+            // an `adb ... -d` VIEW intent, or navController.navigate(uri) — the NavHost matches
+            // it against these patterns, extracts {id}, and shows this screen.
+            deepLinks = listOf(navDeepLink { uriPattern = "todoapp://task/{id}" }),
+        ) { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")
             if (id != null) {
                 TaskDetailScreen(
