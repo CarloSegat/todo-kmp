@@ -22,6 +22,20 @@
                 <data android:scheme="todoapp" android:host="task" />
             </intent-filter>
         </activity>
+
+        <!-- Gives a picture taken from within the app a content:// URI, backed by a
+             file we own, to write the photo into. Android forbids passing raw file:// paths
+             between apps, so a FileProvider is the required way. Gallery picking does NOT use
+             this — the system photo picker hands us its own URI. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
 </manifest>

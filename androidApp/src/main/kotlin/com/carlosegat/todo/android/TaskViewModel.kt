@@ -16,4 +16,5 @@ class TaskViewModel : ViewModel() {
     fun toggle(id: String) = taskManager.toggle(id)
     fun delete(id: String) = taskManager.delete(id)
     fun update(todo: Todo) = taskManager.update(todo)
+    fun setImagePath(id: String, path: String?) = taskManager.setImagePath(id, path)
 }

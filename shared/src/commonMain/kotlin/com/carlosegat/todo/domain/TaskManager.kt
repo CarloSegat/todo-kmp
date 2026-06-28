@@ -31,4 +31,8 @@ class TaskManager {
     fun update(todo: Todo) {
         _todos.value = _todos.value.map { if (it.id == todo.id) todo else it }
     }
+
+    fun setImagePath(id: String, path: String?) {
+        _todos.value = _todos.value.map { if (it.id == id) it.copy(imagePath = path) else it }
+    }
 }
