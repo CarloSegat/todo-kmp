@@ -18,6 +18,12 @@ class TaskManager(private val api: TodoApi = TodoApi()) {
     // StateFlow<T>: the READ-ONLY view exposed to callers — observe, but cannot mutate.
     val todos: StateFlow<List<Todo>> = _todos.asStateFlow()
 
+    // Replace the single todo with this id (leaving the rest untouched). The lambda receives the
+    // existing item, which is handy for carrying over local-only fields like imagePath.
+    private fun replaceById(id: String, transform: (Todo) -> Todo) {
+        _todos.value = _todos.value.map { if (it.id == id) transform(it) else it }
+    }
+
     // Replace local state with the backend's list. Caller runs this in a coroutine scope.
     suspend fun load() {
         _todos.value = api.fetchAll()
@@ -31,10 +37,11 @@ class TaskManager(private val api: TodoApi = TodoApi()) {
     }
 
     // await-then-apply: PUT only the flipped `done` (sparse body), then merge the server copy back,
+    // carrying over the existing local-only imagePath.
     suspend fun toggle(id: String) {
         val current = _todos.value.find { it.id == id } ?: return
         val saved = api.update(id, TodoUpdateDto(done = !current.done))
-        _todos.value = _todos.value.map { if (it.id == id) saved.copy(imagePath = current.imagePath) else it }
+        replaceById(id) { saved.copy(imagePath = it.imagePath) }
     }
 
     // await-then-apply: delete on the server (expect 204), then drop it from local state.
@@ -43,11 +50,29 @@ class TaskManager(private val api: TodoApi = TodoApi()) {
         _todos.value = _todos.value.filterNot { it.id == id }
     }
 
-    fun update(todo: Todo) {
-        _todos.value = _todos.value.map { if (it.id == todo.id) todo else it }
+    // Optimistic: reflect the edit in state IMMEDIATELY, then PUT only if a server-tracked field
+    // changed
+    suspend fun update(updated: Todo) {
+        val previous = _todos.value.find { it.id == updated.id } ?: return
+
+        // call immediately so each typed character int eh "Description" appears
+        replaceById(updated.id) { updated }
+
+        // Only PUT when a field the server tracks changed
+        val trackedChanged = previous.title != updated.title ||
+            previous.description != updated.description ||
+            previous.done != updated.done
+        if (!trackedChanged) return
+
+        // persist
+        val updated = api.update(
+            updated.id,
+            TodoUpdateDto(title = updated.title, description = updated.description, done = updated.done),
+        )
+        replaceById(updated.id) { updated }
     }
 
     fun setImagePath(id: String, path: String?) {
-        _todos.value = _todos.value.map { if (it.id == id) it.copy(imagePath = path) else it }
+        replaceById(id) { it.copy(imagePath = path) }
     }
 }

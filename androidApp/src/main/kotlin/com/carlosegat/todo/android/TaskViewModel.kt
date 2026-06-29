@@ -56,6 +56,14 @@ class TaskViewModel : ViewModel() {
         }
     }
 
-    fun update(todo: Todo) = taskManager.update(todo)
+    fun update(todo: Todo) {
+        viewModelScope.launch {
+            try {
+                taskManager.update(todo)
+            } catch (e: Exception) {
+                Log.e("TaskViewModel", "update failed", e)
+            }
+        }
+    }
     fun setImagePath(id: String, path: String?) = taskManager.setImagePath(id, path)
 }
