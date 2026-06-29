@@ -1,6 +1,7 @@
 package com.carlosegat.todo.domain
 
 import com.carlosegat.todo.data.TodoApi
+import com.carlosegat.todo.data.TodoUpdateDto
 import com.carlosegat.todo.model.Todo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,11 +30,16 @@ class TaskManager(private val api: TodoApi = TodoApi()) {
         _todos.value += saved
     }
 
-    fun toggle(id: String) {
-        _todos.value = _todos.value.map { if (it.id == id) it.toggled() else it }
+    // await-then-apply: PUT only the flipped `done` (sparse body), then merge the server copy back,
+    suspend fun toggle(id: String) {
+        val current = _todos.value.find { it.id == id } ?: return
+        val saved = api.update(id, TodoUpdateDto(done = !current.done))
+        _todos.value = _todos.value.map { if (it.id == id) saved.copy(imagePath = current.imagePath) else it }
     }
 
-    fun delete(id: String) {
+    // await-then-apply: delete on the server (expect 204), then drop it from local state.
+    suspend fun delete(id: String) {
+        api.delete(id)
         _todos.value = _todos.value.filterNot { it.id == id }
     }
 

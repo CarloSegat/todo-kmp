@@ -36,8 +36,26 @@ class TaskViewModel : ViewModel() {
         }
     }
 
-    fun toggle(id: String) = taskManager.toggle(id)
-    fun delete(id: String) = taskManager.delete(id)
+    fun toggle(id: String) {
+        viewModelScope.launch {
+            try {
+                taskManager.toggle(id)
+            } catch (e: Exception) {
+                Log.e("TaskViewModel", "toggle failed", e)
+            }
+        }
+    }
+
+    fun delete(id: String) {
+        viewModelScope.launch {
+            try {
+                taskManager.delete(id)
+            } catch (e: Exception) {
+                Log.e("TaskViewModel", "delete failed", e)
+            }
+        }
+    }
+
     fun update(todo: Todo) = taskManager.update(todo)
     fun setImagePath(id: String, path: String?) = taskManager.setImagePath(id, path)
 }
