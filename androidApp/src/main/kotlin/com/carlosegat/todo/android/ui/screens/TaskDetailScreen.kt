@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -120,6 +121,24 @@ fun TaskDetailScreen(
                 .padding(paddingValues)
                 .padding(16.dp),
         ) {
+            // The description is edited into a local draft and flushed to the backend ONCE, when we
+            // leave this screen
+            var draftDescription by remember { mutableStateOf(todo.description) }
+
+            // Flush once on leave
+            DisposableEffect(todoId) {
+                onDispose {
+                    // if we wrote a bare "return" we would have been returning
+                    // from the TaskDetailScreen composable function
+                    // which is potentially problematic because it would interrupt
+                    // the execution of its tear-down code
+                    val current = todos.find { it.id == todoId } ?: return@onDispose
+                    if (current.description != draftDescription) {
+                        viewModel.update(current.copy(description = draftDescription))
+                    }
+                }
+            }
+
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Checkbox(checked = todo.done, onCheckedChange = { viewModel.toggle(todo.id) })
                 Text(todo.title, style = MaterialTheme.typography.titleLarge)
@@ -128,8 +147,8 @@ fun TaskDetailScreen(
             Text("Created: ${formatTimestamp(todo.createdAt)}")
             Spacer(Modifier.height(16.dp))
             OutlinedTextField(
-                value = todo.description,
-                onValueChange = { viewModel.update(todo.copy(description = it)) },
+                value = draftDescription,
+                onValueChange = { draftDescription = it },
                 label = { Text("Description") },
                 modifier = Modifier.fillMaxWidth(),
             )
